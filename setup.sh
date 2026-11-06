@@ -29,7 +29,11 @@ if python3 -m unittest discover -s tests 2>/dev/null; then echo "OK   Self-test 
   echo "The self-test failed. Open Claude Code in this folder and ask it to run: python3 -m unittest discover -s tests"; exit 1; fi
 
 echo "...  Building the app (about a minute)"
-zsh app/build.sh >/tmp/network-compass-build.log 2>&1 || { echo "The app did not build. Details: /tmp/network-compass-build.log"; exit 1; }
-echo "OK   Network Compass app"
+if zsh app/build.sh >/tmp/network-compass-build.log 2>&1; then
+  echo "OK   Network Compass app"
+else
+  echo "NOTE The Mac app did not build, but you can still use the browser version: python3 webapp/server.py"
+  echo "     Details: /tmp/network-compass-build.log"
+fi
 echo
 echo "All set. Next: type  claude  and then  /setup-network"

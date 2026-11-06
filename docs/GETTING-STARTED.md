@@ -110,7 +110,16 @@ Claude goes through every connection, reads the titles, estimates company sizes 
 
 ## 9. Open the app
 
-**Mac:** open **Network Compass** from the **Applications** folder inside your home folder, and drag it to your Dock. Allow notifications, so check-in reminders can reach you. If macOS warns about the app, right-click it, choose **Open**, and confirm. You only do this once.
+**Mac:** you can choose. Both versions show the same contacts, so you can switch at any time.
+
+| | Mac app (recommended) | Browser version |
+|---|---|---|
+| **Opens as** | Its own app, in your Dock | A tab in your browser |
+| **Check-in reminders** | Notifications, a Dock badge and a menu-bar list | Only inside the app while it is open |
+| **Needs** | Already built by `setup.sh` | A command window kept open while you use it |
+
+- **Mac app:** open **Network Compass** from the **Applications** folder inside your home folder, and drag it to your Dock. Allow notifications, so check-in reminders can reach you. If macOS warns about the app, right-click it, choose **Open**, and confirm. You only do this once.
+- **Browser version:** in a command window in this folder (step 3), run `python3 webapp/server.py`. Keep that window open while you work, and close it when you are done. The app itself only runs on your Mac.
 
 **Windows:** double-click **Network Compass** on your desktop. A small black window opens, then your browser. Keep the black window open while you work, and close it when you are done. The app itself only runs on your PC. Windows may ask you to confirm that the file can run: choose **More info**, then **Run anyway**.
 
