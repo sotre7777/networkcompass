@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Network Compass</title>
+<style>
+:root{--bg:#f5f6f8;--panel:#fff;--soft:#eef0f4;--ink:#1c2230;--muted:#667085;--line:#dfe3ea;--accent:#2f6fde;--on-accent:#fff;--warn:#fdf0cf;--bad:#fbe2dd;--note:#efeafa;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#14171d;--panel:#1c2028;--soft:#272c36;--ink:#e8ebf1;--muted:#9aa3b2;--line:#323844;--accent:#6ea0f2;--on-accent:#10141b;--warn:#4a3d16;--bad:#4d2720;--note:#332c4b;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+#app{display:grid;grid-template-columns:250px 350px 1fr;height:100vh}
+aside,#mid{overflow-y:auto;border-right:1px solid var(--line)}
+aside{padding:14px 10px;display:flex;flex-direction:column;gap:2px}
+h1{font-size:18px;margin:0 8px 10px}
+aside h2{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 8px 4px}
+.nav{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:0;border-radius:7px;background:none;text-align:left}
+.nav:hover{background:var(--soft)}
+.nav.on{background:var(--soft);font-weight:600}
+.nav .n{margin-left:auto;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;display:inline-block}
+.side-foot{margin-top:auto;padding:12px 8px 4px;display:flex;flex-direction:column;gap:8px}
+.check{display:flex;gap:8px;align-items:center}
+#mid{background:var(--panel);display:flex;flex-direction:column}
+#tools{padding:10px;display:flex;gap:6px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel)}
+#tools input{flex:1;min-width:0}
+.ctl{border:1px solid var(--line);background:var(--panel);border-radius:7px;padding:6px 8px}
+.row{display:block;width:100%;padding:9px 12px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left}
+.row:hover{background:var(--soft)}
+.row.on{background:var(--soft);box-shadow:inset 3px 0 var(--accent)}
+.r1{display:flex;gap:6px;align-items:center}
+.nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sub{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill{margin-left:auto;font-size:11px;padding:2px 7px;border-radius:99px;background:var(--soft);white-space:nowrap}
+.pill.warn{background:var(--warn)}.pill.bad{background:var(--bad)}.pill.note{background:var(--note)}
+.score{min-width:20px;text-align:center;font-size:11px;font-weight:600;padding:2px 4px;border-radius:5px;background:var(--soft)}
+.score.s5{background:var(--accent);color:var(--on-accent)}
+#main{overflow-y:auto;padding:24px 28px}
+#main>div{max-width:760px;display:flex;flex-direction:column;gap:18px}
+h3{font-size:24px;margin:0}
+h4{font-size:15px;margin:0}
+.lbl{display:block;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.grid{display:flex;gap:18px;flex-wrap:wrap}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.card.noteb{border-style:dashed}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:7px;padding:5px 11px}
+.btn:hover{background:var(--soft)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.sm{padding:2px 8px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:default}
+textarea.ctl{width:100%;min-height:62px;resize:vertical}
+.line{background:var(--soft);border-radius:8px;padding:10px 12px}
+.head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mute{color:var(--muted);font-size:12.5px}
+.tag{font-size:11.5px;padding:2px 8px;border-radius:99px;background:var(--soft);border:0}
+.tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.hist{border-left:2px solid var(--line);padding-left:14px;display:flex;flex-direction:column;gap:12px}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);width:min(620px,calc(100vw - 32px));max-height:86vh;padding:20px}
+dialog::backdrop{background:rgba(10,14,22,.45)}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form .ctl{width:100%}
+.set{display:flex;gap:6px;align-items:center;margin-bottom:5px}
+.set input{flex:1;min-width:0}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.tile{background:var(--soft);border-radius:8px;padding:10px}
+.tile b{display:block;font-size:20px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:right}
+td:first-child,th:first-child{text-align:left}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px}
+@media (max-width:900px){#app{grid-template-columns:1fr;height:auto}aside,#mid{max-height:50vh;border-right:0}}
+</style>
+</head>
+<body>
+<div id="app"><aside id="side"></aside><section id="mid"><div id="tools"></div><div id="list"></div></section><main id="main"><div></div></main></div>
+<dialog id="dlg"></dialog>
+<div id="toast" hidden></div>
+<script>
+const TOKEN="__TOKEN__", COLORS={blue:"#3478f6",green:"#34a853",orange:"#f28c28",red:"#e5484d",yellow:"#e6b422",purple:"#9b59d0",indigo:"#5b5bd6",teal:"#14a3a8",pink:"#e0529c",gray:"#8a93a3"};
+const CHANNELS=["Email","Call","Meeting","Coffee","LinkedIn","Event","Intro","Message","Other"];
+let D={config:{lists:[],stages:[]},contacts:[]},stamp=0,file="",place=store("place")||"today",sel=null,q="",sort=store("sort")||"list",leaders=store("leaders")==="1",leaderRe=/$^/;
+function store(k,v){try{if(v===undefined)return localStorage.getItem("nc-"+k);localStorage.setItem("nc-"+k,v)}catch(e){return null}}
+const $=id=>document.getElementById(id), esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const today=()=>iso(new Date()), parse=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const days=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
+const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)}, addMonths=n=>{const d=new Date();d.setMonth(d.getMonth()+n);return iso(d)};
+const pretty=s=>parse(s).toLocaleDateString(undefined,{day:"numeric",month:"short",year:parse(s).getFullYear()===new Date().getFullYear()?undefined:"numeric"});
+const color=(arr,n)=>COLORS[(arr.find(x=>x.name===n)||{}).color]||COLORS.gray;
+async function api(path,body){
+  const r=await fetch(path,{method:body?"POST":"GET",headers:{"X-Token":TOKEN,"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});
+  if(!r.ok){toast("That did not save. Is the Network Compass window still open?");throw new Error(path)}
+  return r.json();
+}
+function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2600)}
+async function reload(){
+  const r=await api("/api/data");D=r.data;stamp=r.stamp;file=r.file;
+  try{leaderRe=new RegExp(D.config.leaderPattern,"i")}catch(e){leaderRe=/$^/}
+  D.contacts.forEach(c=>{c.stage=c.stage||D.config.defaultStage});
+  render();
+}
+async function poll(){try{const r=await api("/api/stamp");if(r.stamp!==stamp){const a=document.activeElement;if(!a||!["TEXTAREA","INPUT"].includes(a.tagName)||!a.value)await reload()}}catch(e){}}
+const last=c=>(c.interactions||[]).reduce((m,i)=>i.date>m?i.date:m,"");
+const open_=c=>(c.classNotes||[]).filter(n=>n.status!=="done"), unseen=c=>(c.changes||[]).filter(x=>!x.seen);
+const isLeader=c=>leaderRe.test(c.role||"")&&!/assistant/i.test(c.role||"");
+function due(c){if(!c.nextFollowUp)return"";const d=days(today(),c.nextFollowUp);return d<0?"overdue":d===0?"today":d<=7?"week":"later"}
+function dueLabel(c){const s=due(c);return s==="overdue"?"overdue "+(-days(today(),c.nextFollowUp))+"d":s==="today"?"check in today":s?pretty(c.nextFollowUp):""}
+function cold(c){const l=last(c),st=D.config.stages;return l&&c.stage!==(st[st.length-1]||{}).name&&days(l,today())>60}
+function inPlace(c,p){
+  if(leaders&&!isLeader(c))return false;
+  if(p==="today")return["overdue","today","week"].includes(due(c));
+  if(p==="notes")return open_(c).length>0;
+  if(p==="updates")return unseen(c).length>0;
+  if(p==="cold")return cold(c);
+  if(p==="everyone")return true;
+  if(p==="none")return !c.net;
+  if(p.startsWith("list:"))return (c.net||{}).list===p.slice(5);
+  if(p.startsWith("stage:"))return c.stage===p.slice(6);
+  return false;
+}
+function rows(){
+  const t=q.trim().toLowerCase(),lp=c=>c.net?D.config.lists.findIndex(l=>l.name===c.net.list):999;
+  let r=D.contacts.filter(c=>inPlace(c,place)&&(!t||[c.name,c.company,c.role,c.email,(c.tags||[]).join(" "),c.notes].join(" ").toLowerCase().includes(t)));
+  const s=place==="today"?"due":sort,by={list:(a,b)=>lp(a)-lp(b)||((a.net||{}).rank||9999)-((b.net||{}).rank||9999)||a.name.localeCompare(b.name),
+    due:(a,b)=>(a.nextFollowUp||"9999").localeCompare(b.nextFollowUp||"9999")||a.name.localeCompare(b.name),
+    last:(a,b)=>(last(a)||"0000").localeCompare(last(b)||"0000"),name:(a,b)=>a.name.localeCompare(b.name)};
+  return r.sort(by[s]||by.list);
+}
+function nav(p,label,dotc){const n=D.contacts.filter(c=>inPlace(c,p)).length;
+  return `<button class="nav${place===p?" on":""}" data-p="${esc(p)}">${dotc?`<span class="dot" style="background:${dotc}"></span>`:""}<span>${esc(label)}</span><span class="n">${n}</span></button>`}
+function render(){
+  const dueNow=D.contacts.filter(c=>["overdue","today"].includes(due(c))).length;
+  document.title=(dueNow?`(${dueNow}) `:"")+"Network Compass";
+  $("side").innerHTML=`<h1>Network Compass</h1>`+nav("today","Today")+nav("notes","Notes for Claude")+nav("updates","LinkedIn updates")+nav("cold","Going cold")+
+    `<h2>Network</h2>`+nav("everyone","Everyone")+D.config.lists.map(l=>nav("list:"+l.name,l.name,COLORS[l.color])).join("")+nav("none","Unclassified",COLORS.gray)+
+    `<h2>Stages</h2>`+D.config.stages.map(s=>nav("stage:"+s.name,s.name,COLORS[s.color])).join("")+
+    `<div class="side-foot"><label class="check"><input type="checkbox" id="lead"${leaders?" checked":""}> Leaders only</label>
+     <button class="btn" id="new">+ New contact</button><button class="btn" id="out">Outreach results</button><button class="btn" id="set">Settings</button></div>`;
+  $("tools").innerHTML=`<input class="ctl" id="q" type="search" placeholder="Name, company, tag" aria-label="Search" value="${esc(q)}">
+    <select class="ctl" id="sort" aria-label="Sort">${[["list","List order"],["due","Check-in date"],["last","Longest since contact"],["name","Name"]].map(o=>`<option value="${o[0]}"${sort===o[0]?" selected":""}>${o[1]}</option>`).join("")}</select>`;
+  renderList();renderDetail();
+}
+function renderList(){
+  const r=rows();
+  $("list").innerHTML=r.length?r.slice(0,3000).map(c=>{const d=due(c),l=last(c),n=c.net;
+    const pill=unseen(c).length?`<span class="pill">job change</span>`:open_(c).length?`<span class="pill note">note for Claude</span>`:d?`<span class="pill ${d==="overdue"?"bad":d==="later"?"":"warn"}">${esc(dueLabel(c))}</span>`:"";
+    return `<button class="row${c.id===sel?" on":""}" data-id="${esc(c.id)}"><span class="r1"><span class="dot" style="background:${n?color(D.config.lists,n.list):"transparent"}"></span><span class="nm">${esc(c.name)}</span>${n&&+n.score?`<span class="score s${esc(n.score)}">${esc(n.score)}</span>`:""}${pill}</span>
+     <div class="sub">${esc([c.role,c.company].filter(Boolean).join(" · ")||"No role or company")}</div>
+     <div class="sub"><span class="dot" style="width:7px;height:7px;background:${color(D.config.stages,c.stage)}"></span> ${esc(c.stage)}${l?" · last touchpoint "+esc(pretty(l)):""}</div></button>`}).join(""):
+    `<p class="mute" style="padding:16px">${place==="today"?"Nobody is due a check-in this week.":"Nobody here."}</p>`;
+}
+function renderDetail(){
+  const c=D.contacts.find(x=>x.id===sel),m=$("main").firstElementChild;
+  if(!c){m.innerHTML=D.contacts.length?`<p class="mute">Pick someone from the list.</p>`:`<h3>No contacts yet</h3><p class="mute">Run /setup-network and /mine-network in Claude Code, or add someone with New contact.</p>`;return}
+  const n=c.net,st=D.config.stages,l=last(c),opts=(a,v)=>a.map(x=>`<option${x===v?" selected":""}>${esc(x)}</option>`).join("");
+  const lines=n&&n.lines?Object.keys(n.lines).filter(k=>n.lines[k]).sort((a,b)=>(a!=="en")-(b!=="en")||a.localeCompare(b)):[];
+  const hist=[...(c.interactions||[]).map(i=>({...i,rm:true})),...(c.changes||[]).map(x=>({date:x.date,type:"LinkedIn update",summary:(x.from.position+" at "+x.from.company)+" → "+(x.to.position+" at "+x.to.company)}))].sort((a,b)=>(b.date+(b.at||"")).localeCompare(a.date+(a.at||"")));
+  m.innerHTML=`<div class="head"><div><h3>${esc(c.name)}</h3><div class="mute">${esc([c.role,c.company].filter(Boolean).join(" at ")||"No role or company yet")}</div></div>
+    <div class="tags"><button class="btn" id="edit">Edit</button><button class="btn" id="del">Delete</button></div></div>
+   ${unseen(c).length?`<div class="card"><div class="head"><b>LinkedIn update</b><button class="btn sm" id="seen">Mark as seen</button></div>${unseen(c).map(x=>`<div>${esc(x.from.position)} at ${esc(x.from.company)} → <b>${esc(x.to.position)} at ${esc(x.to.company)}</b></div>`).join("")}<div class="mute">A good moment to reach out and congratulate them.</div></div>`:""}
+   <div class="grid">
+    <div><label class="lbl" for="fList">List</label><select class="ctl" id="fList"><option value="">Unclassified</option>${D.config.lists.map(x=>`<option${n&&n.list===x.name?" selected":""}>${esc(x.name)}</option>`).join("")}</select></div>
+    <div><label class="lbl" for="fStage">Stage</label><select class="ctl" id="fStage">${opts(st.map(s=>s.name),c.stage)}</select></div>
+    <div><label class="lbl" for="fDue">Check-in reminder</label><input class="ctl" type="date" id="fDue" value="${esc(c.nextFollowUp||"")}">
+      <div class="tags" style="margin-top:4px">${[["+1w",7],["+2w",14]].map(b=>`<button class="btn sm" data-d="${b[1]}">${b[0]}</button>`).join("")}${[["+1m",1],["+3m",3]].map(b=>`<button class="btn sm" data-m="${b[1]}">${b[0]}</button>`).join("")}<button class="btn sm" data-clear>None</button></div></div>
+    ${l?`<div><span class="lbl">Last touchpoint</span>${esc(pretty(l))}<div class="mute">${c.interactions.length} logged</div></div>`:""}
+   </div>
+   <div><span class="lbl">Contact details</span>${c.email?`<div>${esc(c.email)}</div>`:""}${c.phone?`<div>${esc(c.phone)}</div>`:""}${/^https?:\/\//.test(c.linkedin||"")?`<div><a href="${esc(c.linkedin)}" target="_blank" rel="noopener">${esc(c.linkedin.replace(/^https?:\/\/(www\.)?/,""))}</a></div>`:""}${!c.email&&!c.phone?`<div class="mute">No email or phone yet. Use Edit to add them.</div>`:""}
+    <div class="tags" style="margin-top:6px">${(c.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div></div>
+   ${c.notes?`<div><span class="lbl">Your notes</span><div class="line" style="white-space:pre-wrap">${esc(c.notes)}</div></div>`:""}
+   ${n?`<div class="card"><div class="tags"><h4>Network list</h4>${+n.score?`<span class="score s${esc(n.score)}">${esc(n.score)}</span>`:""}${n.rank?`<span class="mute">#${esc(n.rank)} in ${esc(n.list)}</span>`:""}${n.category?`<span class="tag">${esc(n.category)}</span>`:""}</div>
+     ${n.why?`<div>${esc(n.why)}</div>`:""}${n.score==="5"?`<div class="line" style="background:var(--warn)">Before sending: check the live profile for a recent post, a shared group or a mutual connection.</div>`:""}
+     ${lines.map(k=>`<div class="line"><div class="head"><span class="lbl" style="margin:0">${esc(k)} · ${n.lines[k].trim().split(/\s+/).length} words</span><button class="btn sm" data-copy="${esc(n.lines[k])}">Copy</button></div>${esc(n.lines[k])}</div>`).join("")}
+     ${n.size?`<div class="mute">Company size: ${esc(n.size)}</div>`:""}${n.signals?`<div class="mute">Signals: ${esc(n.signals)}</div>`:""}${n.order?`<div class="mute">Contact order: ${esc(n.order)}</div>`:""}</div>`:""}
+   <div class="card noteb"><h4>Notes for Claude</h4><div class="mute">Tell Claude where this person belongs, or what only you know: how you know each other, first name or formal, anything to avoid. Then run /process-notes in Claude Code.</div>
+     ${(c.classNotes||[]).slice().reverse().map(x=>`<div class="line" style="background:${x.status==="done"?"var(--soft)":"var(--note)"}"><div class="head"><span class="mute">${esc(pretty(x.date))} · ${x.status==="done"?"Done":"Open"}</span>${x.status!=="done"?`<button class="btn sm" data-rmnote="${esc(x.id)}">Remove</button>`:""}</div>${esc(x.text)}${x.result?`<div class="mute">Claude: ${esc(x.result)}</div>`:""}</div>`).join("")}
+     <textarea class="ctl" id="noteText" aria-label="New note for Claude" placeholder="e.g. Former colleague, informal, has seen me work."></textarea><div><button class="btn" id="noteSave">Save note for Claude</button></div></div>
+   <div class="card"><h4>Log a touchpoint</h4><div class="grid">
+      <div><label class="lbl" for="lDate">Date</label><input class="ctl" type="date" id="lDate" value="${today()}"></div>
+      <div><label class="lbl" for="lType">Channel</label><select class="ctl" id="lType">${opts(CHANNELS,"Email")}</select></div>
+      <div><label class="lbl" for="lStage">Stage after this</label><select class="ctl" id="lStage">${opts(st.map(s=>s.name),c.stage)}</select></div>
+      <div><label class="lbl" for="lAsk">Ask</label><select class="ctl" id="lAsk"><option value="">Not outreach</option>${opts(D.config.asks,"")}</select></div>
+      <div><label class="lbl" for="lStatus">Outreach status</label><select class="ctl" id="lStatus"><option value="">None</option>${opts(D.config.statuses,"")}</select></div>
+      <div><label class="lbl" for="lNext">Remind me to check in</label><input class="ctl" type="date" id="lNext" value="${addDays(14)}"></div></div>
+     <textarea class="ctl" id="lSum" aria-label="What happened" placeholder="What happened"></textarea><div><button class="btn pri" id="logBtn">Log touchpoint</button></div></div>
+   <div><h4 style="margin-bottom:8px">History</h4>${hist.length?`<div class="hist">${hist.map(i=>`<div><div class="tags"><b>${esc(i.type)}</b><span class="mute">${esc(pretty(i.date))}</span>${i.ask?`<span class="tag">${esc(i.ask)}</span>`:""}${i.status?`<span class="tag">${esc(i.status)}</span>`:""}${i.rm?`<button class="btn sm" data-rmint="${esc(i.id)}">Remove</button>`:""}</div><div style="white-space:pre-wrap">${esc(i.summary)}</div></div>`).join("")}</div>`:`<div class="mute">No touchpoints logged yet.</div>`}</div>`;
+}
+const id8=()=>Math.random().toString(36).slice(2,10);
+async function up(body,msg){await api("/api/update",{id:sel,...body});await reload();if(msg)toast(msg)}
+function setList(v){const c=D.contacts.find(x=>x.id===sel),net=v?{...(c.net||{lines:{}}),list:v}:null;return up({set:{net,netLocked:true}},"Moved")}
+function editDialog(c){
+  const v=k=>esc((c||{})[k]||""),d=$("dlg");
+  d.innerHTML=`<h4 style="margin-bottom:12px">${c?"Edit contact":"New contact"}</h4><div class="form">${[["name","Name"],["company","Company"],["role","Role"],["email","Email"],["phone","Phone"],["linkedin","LinkedIn URL"]].map(f=>`<div><label class="lbl" for="e_${f[0]}">${f[1]}</label><input class="ctl" id="e_${f[0]}" value="${v(f[0])}"></div>`).join("")}</div>
+   <p><label class="lbl" for="e_tags">Tags, comma separated</label><input class="ctl" style="width:100%" id="e_tags" value="${esc(((c||{}).tags||[]).join(", "))}"></p>
+   <p><label class="lbl" for="e_notes">Your notes</label><textarea class="ctl" id="e_notes">${v("notes")}</textarea></p>
+   <div class="head"><span></span><div class="tags"><button class="btn" id="eCancel">Cancel</button><button class="btn pri" id="eSave">Save</button></div></div>`;
+  d.showModal();$("e_name").focus();
+  $("eCancel").onclick=()=>d.close();
+  $("eSave").onclick=async()=>{
+    const o={};["name","company","role","email","phone","linkedin","notes"].forEach(k=>o[k]=$("e_"+k).value.trim());
+    if(!o.name){$("e_name").focus();return}
+    o.tags=$("e_tags").value.split(",").map(t=>t.trim()).filter(Boolean);
+    d.close();
+    if(c)await up({set:o},"Saved");
+    else{o.stage=D.config.defaultStage;o.nextFollowUp="";const r=await api("/api/add",{contact:o});sel=r.id;place="everyone";await reload();toast("Contact added")}
+  };
+}
+function outreach(){
+  const C=D.config,rows=[];
+  D.contacts.forEach(c=>{const a=c.interactions||[];if(!a.some(i=>i.status))return;const s=a.filter(i=>i.status===C.sentStatus).length;
+    rows.push({list:(c.net||{}).list||"Not on the lists",sent:s,reached:s?1:0,replied:a.some(i=>C.repliedStatuses.includes(i.status))?1:0,talked:a.some(i=>i.status===C.talkedStatus)?1:0,ref:a.filter(i=>i.status===C.referralStatus).length,prop:a.filter(i=>i.ask===C.proposalAsk&&i.status===C.sentStatus).length})});
+  const sum=r=>r.reduce((t,x)=>{for(const k in t)t[k]+=x[k];return t},{sent:0,reached:0,replied:0,talked:0,ref:0,prop:0}),rate=t=>t.reached?Math.round(100*t.replied/t.reached)+"%":"–",T=sum(rows),g={};
+  rows.forEach(r=>(g[r.list]=g[r.list]||[]).push(r));
+  const d=$("dlg");
+  d.innerHTML=`<h4 style="margin-bottom:12px">Outreach results</h4><div class="tiles">${[[T.sent,"Messages sent"],[rate(T),"Reply rate"],[T.talked,"Conversations held"],[T.ref,"Referrals received"],[T.prop,C.proposalLabel]].map(x=>`<div class="tile"><b>${esc(x[0])}</b><span class="mute">${esc(x[1])}</span></div>`).join("")}</div>
+   <p class="mute">${T.reached?`Based on ${T.reached} ${T.reached===1?"person":"people"} you messaged.${T.reached<20?" That is too few to read much into yet.":""}`:"Nothing logged yet. When you send a message, log a touchpoint with its outreach status and Ask."}</p>
+   ${Object.keys(g).length?`<table><tr><th>List</th><th>Messages</th><th>People</th><th>Replied</th><th>Reply rate</th><th>Talked</th><th>Referrals</th></tr>${Object.keys(g).sort().map(k=>{const t=sum(g[k]);return`<tr><td>${esc(k)}</td><td>${t.sent}</td><td>${t.reached}</td><td>${t.replied}</td><td>${rate(t)}${t.reached&&t.reached<10?` (n=${t.reached})`:""}</td><td>${t.talked}</td><td>${t.ref}</td></tr>`}).join("")}</table>`:""}
+   <p><button class="btn" id="dClose">Close</button></p>`;
+  d.showModal();$("dClose").onclick=()=>d.close();
+}
+function settings(){
+  const C=D.config,d=$("dlg"),row=(kind,x,i,canDel)=>`<div class="set"><select class="ctl" data-color="${kind}" data-i="${i}" aria-label="Color">${Object.keys(COLORS).map(k=>`<option${k===x.color?" selected":""}>${k}</option>`).join("")}</select><input class="ctl" data-name="${kind}" data-i="${i}" aria-label="Name" value="${esc(x.name)}"><button class="btn sm" data-up="${kind}" data-i="${i}" aria-label="Move up">↑</button><button class="btn sm" data-dn="${kind}" data-i="${i}" aria-label="Move down">↓</button><button class="btn sm" data-rm="${kind}" data-i="${i}"${canDel?"":" disabled"}>Delete</button></div>`;
+  d.innerHTML=`<h4>Lists</h4><p class="mute">How you group your network. Deleting a list moves its people to Unclassified.</p>${C.lists.map((x,i)=>row("lists",x,i,true)).join("")}<div class="set"><input class="ctl" id="newList" placeholder="New list" aria-label="New list"><button class="btn sm" data-add="lists">Add</button></div>
+   <h4 style="margin-top:16px">Stages</h4><p class="mute">Where each relationship stands. The last stage counts as dormant.</p>${C.stages.map((x,i)=>row("stages",x,i,C.stages.length>1&&x.name!==C.defaultStage)).join("")}<div class="set"><input class="ctl" id="newStage" placeholder="New stage" aria-label="New stage"><button class="btn sm" data-add="stages">Add</button></div>
+   <p><label class="lbl" for="defStage">New contacts start on</label><select class="ctl" id="defStage">${C.stages.map(s=>`<option${s.name===C.defaultStage?" selected":""}>${esc(s.name)}</option>`).join("")}</select></p>
+   <p class="mute">Data file: ${esc(file)}</p><p><button class="btn" id="dClose">Close</button></p>`;
+  d.showModal();$("dClose").onclick=()=>d.close();
+  $("defStage").onchange=e=>saveConf({defaultStage:e.target.value});
+}
+async function saveConf(config,extra){await api("/api/config",{config,...(extra||{})});await reload();if($("dlg").open)settings()}
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("button");if(!t)return;
+  if(t.dataset.p!==undefined){place=t.dataset.p;store("place",place);render()}
+  else if(t.dataset.id){sel=t.dataset.id;renderList();renderDetail();$("main").scrollTop=0}
+  else if(t.id==="new")editDialog(null);
+  else if(t.id==="out")outreach();
+  else if(t.id==="set")settings();
+  else if(t.id==="edit")editDialog(D.contacts.find(x=>x.id===sel));
+  else if(t.id==="del"){if(t.dataset.armed){await api("/api/delete",{id:sel});sel=null;await reload();toast("Contact deleted")}else{t.dataset.armed=1;t.textContent="Click again to delete"}}
+  else if(t.id==="seen"){const c=D.contacts.find(x=>x.id===sel);await up({set:{changes:c.changes.map(x=>({...x,seen:true}))}})}
+  else if(t.dataset.d)await up({set:{nextFollowUp:addDays(+t.dataset.d)}},"Reminder set");
+  else if(t.dataset.m)await up({set:{nextFollowUp:addMonths(+t.dataset.m)}},"Reminder set");
+  else if(t.dataset.clear!==undefined)await up({set:{nextFollowUp:""}},"Reminder cleared");
+  else if(t.dataset.copy!==undefined){try{await navigator.clipboard.writeText(t.dataset.copy);toast("Copied")}catch(err){toast("Could not copy: select the text instead")}}
+  else if(t.id==="noteSave"){const x=$("noteText").value.trim();if(x){$("noteText").value="";await up({append:{classNotes:{id:id8(),date:today(),text:x,status:"open",at:new Date().toISOString()}}},"Note saved for Claude")}}
+  else if(t.dataset.rmnote)await up({remove:{classNotes:t.dataset.rmnote}});
+  else if(t.dataset.rmint)await up({remove:{interactions:t.dataset.rmint}});
+  else if(t.id==="logBtn"){const s=$("lSum").value.trim();if(!s){$("lSum").focus();return}
+    const en={id:id8(),date:$("lDate").value||today(),type:$("lType").value,summary:s,at:new Date().toISOString()};if($("lAsk").value)en.ask=$("lAsk").value;if($("lStatus").value)en.status=$("lStatus").value;
+    $("lSum").value="";await up({append:{interactions:en},set:{stage:$("lStage").value,nextFollowUp:$("lNext").value}},"Touchpoint logged")}
+  else if(t.dataset.add){const k=t.dataset.add,el=$(k==="lists"?"newList":"newStage"),n=el.value.trim();if(n&&!D.config[k].some(x=>x.name===n))await saveConf({[k]:[...D.config[k],{name:n,color:k==="lists"?"blue":"gray"}]})}
+  else if(t.dataset.up||t.dataset.dn){const k=t.dataset.up||t.dataset.dn,i=+t.dataset.i,j=i+(t.dataset.up?-1:1),a=[...D.config[k]];if(a[j]){[a[i],a[j]]=[a[j],a[i]];await saveConf({[k]:a})}}
+  else if(t.dataset.rm){const k=t.dataset.rm,i=+t.dataset.i,n=D.config[k][i].name;await saveConf({[k]:D.config[k].filter((_,x)=>x!==i)},k==="lists"?{deleteList:n}:{deleteStage:n})}
+});
+document.addEventListener("change",async e=>{
+  const t=e.target;
+  if(t.id==="fList")await setList(t.value);
+  else if(t.id==="fStage")await up({set:{stage:t.value}},"Stage updated");
+  else if(t.id==="fDue")await up({set:{nextFollowUp:t.value}},t.value?"Reminder set":"Reminder cleared");
+  else if(t.id==="lead"){leaders=t.checked;store("leaders",leaders?"1":"0");render()}
+  else if(t.id==="sort"){sort=t.value;store("sort",sort);renderList()}
+  else if(t.dataset.color){const k=t.dataset.color,a=D.config[k].map(x=>({...x}));a[+t.dataset.i].color=t.value;await saveConf({[k]:a})}
+  else if(t.dataset.name){const k=t.dataset.name,i=+t.dataset.i,a=D.config[k].map(x=>({...x})),old=a[i].name,n=t.value.trim();
+    if(!n||n===old||a.some(x=>x.name===n)){t.value=old;return}
+    a[i].name=n;const conf={[k]:a};if(k==="stages"&&D.config.defaultStage===old)conf.defaultStage=n;
+    await saveConf(conf,k==="lists"?{renameList:[old,n]}:{renameStage:[old,n]})}
+});
+document.addEventListener("input",e=>{if(e.target.id==="q"){q=e.target.value;renderList()}});
+reload().then(()=>setInterval(poll,3000));
+</script>
+</body>
+</html>

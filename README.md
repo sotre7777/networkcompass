@@ -22,30 +22,37 @@ Both are starting points. You name your own categories, lists and stages.
 - **Every connection scored** 1 to 5 against your own target, with the signals used and the reason, and with every inference labeled
 - **Opening lines** in your languages, each written for one person, each checked against your own rules
 - **A plain answer on fit**: how much of your network sits in your target at all, and whether you need another route
-- **A native Mac app**: your own lists and stages, a Today view, touchpoint logging, check-in reminders as macOS notifications, a Dock badge, a menu-bar list, job-change alerts and outreach results
+- **An app to work the list**: your own lists and stages, a Today view, touchpoint logging, check-in reminders, job-change alerts and outreach results. On a Mac it is a native app with notifications, a Dock badge and a menu-bar list. On Windows and Linux it runs in your browser, on your own computer
 - **Notes for Claude**: write "former colleague, informal, move to Warm network" on a contact in the app, run `/process-notes`, and Claude applies it and rewrites the opening line
 
 ## Quick start
 
-You need [Claude Code](https://claude.com/claude-code), Python 3.10 or newer, and `pip install pandas`. The app needs macOS 14 or newer and the Swift command line tools (`xcode-select --install`). Without a Mac, the analysis still works and gives you CSV files.
+**New to this? Follow [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md).** It explains every step and needs no coding.
+
+The short version needs [Claude Code](https://claude.com/claude-code). On a Mac with macOS 14 or newer:
 
 ```bash
 git clone <this repo> network-compass
 cd network-compass
+zsh setup.sh
 claude
 ```
 
+On Windows, install Git and Python first, then replace `zsh setup.sh` with `powershell -ExecutionPolicy Bypass -File setup.ps1`.
+
+Then in Claude Code:
+
 1. Run `/setup-network` and have the conversation. It writes `profile.json`.
-2. Request your LinkedIn archive and unzip it into `export/`. See [docs/linkedin-export.md](docs/linkedin-export.md).
+2. Unzip your LinkedIn archive into `export/`. See [docs/linkedin-export.md](docs/linkedin-export.md).
 3. Run `/mine-network`. Plan about an hour: Claude reads the titles by hand and writes the lines.
-4. Build the app: `app/build.sh`. It installs to `~/Applications`. The first time, right-click it and choose Open, because it is built on your Mac and not signed by Apple.
+4. Open **Network Compass**: from `~/Applications` on a Mac, from the desktop shortcut on Windows. Elsewhere, run `python3 webapp/server.py`.
 5. Work the list. Add what only you know as Notes for Claude, then run `/process-notes`.
 
 To try it without real data: `python3 tests/make_fake_export.py export`.
 
 ## How your data is handled
 
-- Everything stays in your clone: `export/`, `output/`, `data/` and `profile.json` are git-ignored. The app makes no network calls.
+- Everything stays in your clone: `export/`, `output/`, `data/` and `profile.json` are git-ignored. Neither app makes network calls; the browser version only listens on your own computer.
 - **Claude Code does send what it reads to Anthropic's API** to do its work. That includes the names and titles it reviews. Check that this fits your situation before you start.
 - Your export holds other people's names and some email addresses. Keep it private, do not publish the output, and delete the zip when you are done.
 
@@ -55,7 +62,7 @@ To try it without real data: `python3 tests/make_fake_export.py export`.
 - Titles can be years old. Company size is inferred for every row, so check it before you write to anyone.
 - Name matching for recommendations can be wrong when two people share a name; those are flagged.
 - The list misses people. Add them in the app with ⌘N, LinkedIn connection or not.
-- Reminders only fire on the Mac the app runs on. There is no phone version.
+- Reminders reach you as notifications only in the Mac app. In the browser version they show inside the app. There is no phone version.
 
 ## In this repo
 
@@ -64,8 +71,9 @@ To try it without real data: `python3 tests/make_fake_export.py export`.
 | `.claude/skills/` | The three commands: the setup dialogue, the analysis, note processing |
 | `profiles/` | Starting points for each lens |
 | `scripts/` | The pipeline, numbered in run order, plus `crm.py` for changing the data file |
-| `app/` | The SwiftUI Mac app and its build script |
-| `docs/` | The LinkedIn export, the data format, how scoring works |
+| `app/` | The native Mac app and its build script |
+| `webapp/` | The browser version, for Windows, Mac and Linux |
+| `docs/` | Step-by-step instructions, the LinkedIn export, the data format, how scoring works |
 | `tests/` | A fake export and end-to-end tests (`python3 -m unittest discover tests`) |
 
 ## Credits

@@ -7,6 +7,8 @@ Start here:
 - `/mine-network`: runs the analysis on the export and loads the app's data file
 - `/process-notes`: applies the "Notes for Claude" the user wrote in the app
 
+Commands in these docs use `python3`. On Windows use `python` instead.
+
 ## Rules
 
 1. **The export holds other people's data.** `export/`, `output/`, `data/` and `profile.json` are git-ignored and stay that way. Nothing from them goes into a commit or an issue. Do not print whole files; show counts and only the rows you need.

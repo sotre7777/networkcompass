@@ -1,6 +1,6 @@
 # The data file
 
-`data/crm.json` holds everything the app shows. The app re-reads it before every save and reloads within three seconds when it changes on disk, so scripts and Claude can edit it while the app is open. Write it atomically.
+`data/crm.json` holds everything the Mac app and the browser version show. Both re-read it before every save and reloads within three seconds when it changes on disk, so scripts and Claude can edit it while the app is open. Write it atomically.
 
 ```json
 {

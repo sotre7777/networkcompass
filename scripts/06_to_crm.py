@@ -10,17 +10,7 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
-from common import CRM, DATA, OUT, WORK, norm, norm_url, profile, write_json_atomic
-
-
-def default_config(p):
-    o = p["outreach"]
-    return {"lists": [{"name": x["label"], "color": x["color"], "source": x["source"]} for x in p["lists"]],
-            "stages": p["stages"], "defaultStage": p["default_stage"],
-            "asks": o["asks"], "statuses": o["statuses"], "sentStatus": o["sent_status"],
-            "repliedStatuses": o["replied_statuses"], "talkedStatus": o["talked_status"],
-            "referralStatus": o["referral_status"], "proposalAsk": o["proposal_ask"],
-            "proposalLabel": o["proposal_label"], "leaderPattern": p["leader_pattern"]}
+from common import CRM, DATA, OUT, WORK, default_config, norm, norm_url, profile, write_json_atomic
 
 
 def main() -> None:

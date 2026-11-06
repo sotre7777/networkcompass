@@ -21,6 +21,6 @@ Needs `profile.json` (run `/setup-network` first) and an unzipped LinkedIn expor
 
 7. `python3 scripts/05_check_lines.py` and fix everything it reports.
 
-8. `python3 scripts/06_to_crm.py`. It merges into `data/crm.json` and backs up the old file first. It never touches stages, notes, touchpoints or reminders. Then show where each list stands and tell the user to open the app, or to run `app/build.sh` if they have not built it yet.
+8. `python3 scripts/06_to_crm.py`. It merges into `data/crm.json` and backs up the old file first. It never touches stages, notes, touchpoints or reminders. Then show where each list stands and tell the user to open the app.
 
 Always state the limits: you only see the export, with no About sections, posts, mutual connections or messages; titles can be years old; company size is inferred for every row and must be checked before writing to anyone.

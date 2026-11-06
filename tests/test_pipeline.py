@@ -1,11 +1,14 @@
 """End-to-end test on a fake export, for both lenses. Run: python3 -m unittest discover tests"""
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -125,6 +128,58 @@ class Pipeline(unittest.TestCase):
         self.run_step(root, "06_to_crm.py")
         c2 = next(x for x in self.crm(root)["contacts"] if x["id"] == c["id"])
         self.assertEqual(c2["net"]["list"], "Warm network")
+
+
+class WebApp(unittest.TestCase):
+    """The browser app's server: saves, keeps others' edits, and refuses outsiders."""
+
+    def setUp(self):
+        self.root = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.root, ignore_errors=True)
+        shutil.copytree(REPO / "profiles", self.root / "profiles")
+        env = dict(os.environ, NC_ROOT=str(self.root), PYTHONUNBUFFERED="1")
+        self.proc = subprocess.Popen([sys.executable, str(REPO / "webapp/server.py"), "--port", "0", "--no-browser"],
+                                     env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        self.addCleanup(self.proc.stdout.close)
+        self.addCleanup(self.proc.wait)
+        self.addCleanup(self.proc.terminate)
+        self.base = self.proc.stdout.readline().split()[-1].rstrip("/")
+        page = urllib.request.urlopen(self.base + "/").read().decode()
+        self.token = re.search(r'TOKEN="([^"]+)"', page).group(1)
+
+    def call(self, path, body=None, token=None, host=None):
+        data = json.dumps(body).encode() if body is not None else None
+        req = urllib.request.Request(self.base + path, data=data)
+        req.add_header("X-Token", self.token if token is None else token)
+        if host:
+            req.add_header("Host", host)
+        with urllib.request.urlopen(req) as r:
+            return json.loads(r.read())
+
+    def test_add_update_and_claude_edit_in_between(self):
+        cid = self.call("/api/add", {"contact": {"name": "Test Person", "stage": "Prospect"}})["id"]
+        crm = self.root / "data/crm.json"
+        d = json.loads(crm.read_text(encoding="utf-8"))
+        d["contacts"][0]["notes"] = "Written by Claude while the app is open"
+        crm.write_text(json.dumps(d), encoding="utf-8")
+        self.call("/api/update", {"id": cid, "set": {"stage": "Assess", "nextFollowUp": "2030-01-01"},
+                                  "append": {"interactions": {"id": "i1", "date": "2026-01-01", "type": "Call", "summary": "Spoke"}}})
+        c = self.call("/api/data")["data"]["contacts"][0]
+        self.assertEqual((c["stage"], c["nextFollowUp"], len(c["interactions"])), ("Assess", "2030-01-01", 1))
+        self.assertEqual(c["notes"], "Written by Claude while the app is open")
+
+    def test_rename_stage_carries_to_contacts(self):
+        self.call("/api/add", {"contact": {"name": "A", "stage": "Assess"}})
+        conf = self.call("/api/data")["data"]["config"]
+        stages = [dict(s, name="Review" if s["name"] == "Assess" else s["name"]) for s in conf["stages"]]
+        self.call("/api/config", {"config": {"stages": stages}, "renameStage": ["Assess", "Review"]})
+        self.assertEqual(self.call("/api/data")["data"]["contacts"][0]["stage"], "Review")
+
+    def test_refuses_without_token_or_from_another_site(self):
+        for kwargs in ({"token": "wrong"}, {"host": "evil.example"}):
+            with self.assertRaises(urllib.error.HTTPError) as e:
+                self.call("/api/data", **kwargs)
+            self.assertEqual(e.exception.code, 403)
 
 
 if __name__ == "__main__":
