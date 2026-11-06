@@ -14,9 +14,9 @@ No coding needed. You type a few commands, and Claude does the rest. Copy each c
 
 ## 2. Download Network Compass
 
-1. On this project's GitHub page, click the green **Code** button, then **Download ZIP**.
+1. Go to [github.com/sotre7777/networkcompass](https://github.com/sotre7777/networkcompass), click the green **Code** button, then **Download ZIP**.
 2. Open the ZIP from your Downloads folder.
-3. Move the folder `network-compass-main` into your **Documents** folder.
+3. Move the folder `networkcompass-main` into your **Documents** folder.
    - **Windows:** right-click the ZIP, choose **Extract All**, and extract it to Documents. If you get a folder inside a folder, move the inner one up.
 
 ## 3. Open a command window in that folder
@@ -24,16 +24,16 @@ No coding needed. You type a few commands, and Claude does the rest. Copy each c
 **Mac:** open **Terminal** (press ⌘ Space, type Terminal, press Return). Then copy this in and press Return:
 
 ```bash
-cd ~/Documents/network-compass-main
+cd ~/Documents/networkcompass-main
 ```
 
 **Windows:** press the Windows key, type **PowerShell**, press Return. Then copy this in and press Return:
 
 ```powershell
-cd $HOME\Documents\network-compass-main
+cd $HOME\Documents\networkcompass-main
 ```
 
-If your Documents folder is in OneDrive, use `cd $HOME\OneDrive\Documents\network-compass-main`.
+If your Documents folder is in OneDrive, use `cd $HOME\OneDrive\Documents\networkcompass-main`.
 
 ## 4. Install Claude Code
 
@@ -94,7 +94,7 @@ Claude sometimes asks permission to run a command or edit a file. For commands i
 
 ## 7. Put your LinkedIn data in place
 
-When LinkedIn's email arrives, download the ZIP and open it. Move **everything inside** into the `export` folder in `network-compass-main`. You should now have the file `export/Connections.csv`.
+When LinkedIn's email arrives, download the ZIP and open it. Move **everything inside** into the `export` folder in `networkcompass-main`. You should now have the file `export/Connections.csv`.
 
 Not sure? Ask Claude: "Is my LinkedIn export in the right place?"
 
@@ -130,7 +130,7 @@ Claude goes through every connection, reads the titles, estimates company sizes 
 | What you see | What to do |
 |---|---|
 | `command not found: claude`, or `claude` is not recognized | Open a new window, repeat step 3, then try again. If it stays, repeat step 4. |
-| `no such file or directory`, or a path that cannot be found | The folder is somewhere else or has another name. Check that `network-compass-main` is in Documents. |
+| `no such file or directory`, or a path that cannot be found | The folder is somewhere else or has another name. Check that `networkcompass-main` is in Documents. |
 | Windows: Python is missing, or opens the Microsoft Store | Install Python from python.org and tick **Add python.exe to PATH**. |
 | Windows: the black window closes at once | Run `python webapp\server.py` from the folder to see the message, or ask Claude. |
 | `No profile.json yet` | Run `/setup-network` first. |

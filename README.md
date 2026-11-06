@@ -32,8 +32,8 @@ Both are starting points. You name your own categories, lists and stages.
 The short version needs [Claude Code](https://claude.com/claude-code). On a Mac with macOS 14 or newer:
 
 ```bash
-git clone <this repo> network-compass
-cd network-compass
+git clone https://github.com/sotre7777/networkcompass.git
+cd networkcompass
 zsh setup.sh
 claude
 ```
