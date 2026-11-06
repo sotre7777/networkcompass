@@ -1,0 +1,14 @@
+# Your network stays on your machine. Never remove these lines.
+export/
+output/
+data/
+profile.json
+*.zip
+*.csv
+!tests/**/*.csv
+
+# Build output and system files
+app/build/
+__pycache__/
+*.pyc
+.DS_Store

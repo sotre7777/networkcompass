@@ -1,0 +1,85 @@
+{
+  "lens": "opportunity",
+  "owner": {
+    "name": "",
+    "background": "",
+    "proof_points": [],
+    "base": "",
+    "languages": ["en"]
+  },
+  "goal": {
+    "summary": "",
+    "not_looking_for": "",
+    "weeks": 8,
+    "target_conversations": 12,
+    "ask": "A short conversation about how their organization handles the problem you solve, or an introduction to the person who owns it. Never ask for work in the first message."
+  },
+  "target": {
+    "description": "",
+    "size_min": 200,
+    "size_max": 2000,
+    "near_low": 100,
+    "near_high": 5000,
+    "count_units_inside_large_companies": true,
+    "regions": [],
+    "sectors": [],
+    "signals": [],
+    "avoid": []
+  },
+  "categories": [
+    {"id": "decision_exec", "label": "Decision makers", "kind": "decision",
+     "match": ["\\bCEO\\b", "chief executive", "\\bCOO\\b", "chief operating", "managing director", "general manager", "co-?founder", "\\bfounder\\b", "country manager", "\\bpresident\\b(?!.*vice)"]},
+    {"id": "decision_budget", "label": "Budget owners", "kind": "decision",
+     "match": ["chief (people|human|hr|marketing|revenue|product|technology|information|financial)", "\\bC[HMRPTIF]O\\b", "\\b(vp|vice president|svp|evp)\\b", "\\bhead of\\b"]},
+    {"id": "intermediary", "label": "Intermediaries", "kind": "door",
+     "match": ["fractional", "\\binterim\\b", "talent partner", "portfolio", "agency", "\\bpartner\\b.*(consult|advis|boutique)"]},
+    {"id": "referrer", "label": "Referral sources", "kind": "door",
+     "match": ["\\bcoach\\b", "facilitat", "\\bconsultant\\b", "\\badvisor\\b", "\\bfreelance", "independent"]},
+    {"id": "investor", "label": "Investors & boards", "kind": "investor",
+     "match": ["operating partner", "venture partner", "general partner", "\\binvestor\\b", "angel", "board member", "board of directors", "non[- ]executive", "supervisory board", "\\bchair(man|woman)?\\b"]}
+  ],
+  "ignore_titles": ["product owner", "executive assistant", "personal assistant", "agile coach", "health coach", "life coach"],
+  "seniority_pattern": "\\b(vp|vice president|svp|evp|director|head|chief|c[a-z]o|general manager|managing|partner|principal)\\b",
+  "leader_pattern": "\\b(chief|ceo|coo|cfo|cto|cmo|cro|cpo|chro|cio|cco|cso|founder|co-?founder|president|vp|vice president|svp|evp|general manager|managing director|head of|senior director|country manager|managing partner|chair|chairman|chairwoman)\\b",
+  "former_employers": [],
+  "current_employer": "",
+  "in_talks_companies": [],
+  "referral_only_companies": [],
+  "excluded_companies": [],
+  "use_job_files": false,
+  "lists": [
+    {"id": "matches", "label": "Matches", "color": "blue", "source": "matches", "cap_4": 30},
+    {"id": "investors", "label": "Investors & boards", "color": "green", "source": "investors"},
+    {"id": "referral_companies", "label": "Referral-only companies", "color": "purple", "source": "referral_companies"},
+    {"id": "warm", "label": "Warm network", "color": "orange", "source": "warm", "cap": 20},
+    {"id": "in_talks_leaders", "label": "In talks: leadership", "color": "indigo", "source": "in_talks_leaders"},
+    {"id": "in_talks_rest", "label": "In talks: second tier", "color": "indigo", "source": "in_talks_rest"}
+  ],
+  "stages": [
+    {"name": "Active opportunity", "color": "red"},
+    {"name": "Prospect", "color": "yellow"},
+    {"name": "Assess", "color": "purple"},
+    {"name": "Champion", "color": "teal"},
+    {"name": "Keep in touch", "color": "green"},
+    {"name": "Dormant", "color": "gray"}
+  ],
+  "default_stage": "Keep in touch",
+  "outreach": {
+    "asks": ["Conversation", "Referral", "Proposal"],
+    "statuses": ["Sent", "Followed up", "No reply", "Declined", "Replied", "Call booked", "Talked", "Lead shared", "Proposal sent", "Won", "Closed"],
+    "sent_status": "Sent",
+    "replied_statuses": ["Replied", "Call booked", "Talked", "Lead shared", "Proposal sent", "Won", "Closed"],
+    "talked_status": "Talked",
+    "referral_status": "Lead shared",
+    "proposal_ask": "Proposal",
+    "proposal_label": "Proposals made"
+  },
+  "opening_lines": {
+    "max_words": 60,
+    "languages": ["en"],
+    "address": "first name",
+    "banned_phrases": ["I would love to connect", "synergy"],
+    "no_contractions": false,
+    "notes": ""
+  }
+}
