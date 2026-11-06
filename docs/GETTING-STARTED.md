@@ -150,3 +150,7 @@ Claude goes through every connection, reads the titles, estimates company sizes 
 ## Your data
 
 Your LinkedIn data and results stay in this folder on your Mac. Claude Code sends what it reads to Anthropic to do the work, including the names and titles it reviews. Your export also contains other people's details, so do not share it, and delete the ZIP when you are done.
+
+## Found this valuable?
+
+Network Compass is free. If it helped you, you can [buy me a coffee](https://buymeacoffee.com/erwinhartenberg).
