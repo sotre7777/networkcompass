@@ -23,6 +23,7 @@ Both are starting points. You name your own categories, lists and stages.
 - **Opening lines** in your languages, each written for one person, each checked against your own rules
 - **A plain answer on fit**: how much of your network sits in your target at all, and whether you need another route
 - **An app to work the list**: your own lists and stages, a Today view, touchpoint logging, check-in reminders, job-change alerts and outreach results. On a Mac it is a native app with notifications, a Dock badge and a menu-bar list. On Windows and Linux it runs in your browser, on your own computer
+- **LinkedIn beside your contacts** (Mac app): chat on LinkedIn in a panel next to the contact, insert their opening line into the message box, and log the conversation as a touchpoint with one click, without copying between windows
 - **Notes for Claude**: write "former colleague, informal, move to Warm network" on a contact in the app, run `/process-notes`, and Claude applies it and rewrites the opening line
 
 ## Quick start
@@ -52,13 +53,14 @@ To try it without real data: `python3 tests/make_fake_export.py export`.
 
 ## How your data is handled
 
-- Everything stays in your clone: `export/`, `output/`, `data/` and `profile.json` are git-ignored. Neither app makes network calls; the browser version only listens on your own computer.
+- Everything stays in your clone: `export/`, `output/`, `data/` and `profile.json` are git-ignored. Neither app sends your data anywhere; the browser version only listens on your own computer. The one exception to "no network" is the Mac app's LinkedIn panel: it loads linkedin.com, signed in as you, only when you open it. What you log from it is saved in your own data file.
 - **Claude Code does send what it reads to Anthropic's API** to do its work. That includes the names and titles it reviews. Check that this fits your situation before you start.
 - Your export holds other people's names and some email addresses. Keep it private, do not publish the output, and delete the zip when you are done.
 
 ## Limits
 
-- It only sees the export: no About sections, posts, mutual connections or messages.
+- The analysis only sees the export: no About sections, posts, mutual connections or messages. Conversations reach your contacts only when you log them from the LinkedIn panel.
+- The LinkedIn panel is in the Mac app only. LinkedIn does not allow itself to be shown inside another web page, so the browser version opens profiles in a new tab instead.
 - Titles can be years old. Company size is inferred for every row, so check it before you write to anyone.
 - Name matching for recommendations can be wrong when two people share a name; those are flagged.
 - The list misses people. Add them in the app with ⌘N, LinkedIn connection or not.

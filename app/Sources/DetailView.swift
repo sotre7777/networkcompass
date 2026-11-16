@@ -23,6 +23,7 @@ struct DetailView: View {
 
     var body: some View {
         if let c {
+            ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
                     header(c)
@@ -32,12 +33,21 @@ struct DetailView: View {
                     if !c.notes.isEmpty { notes(c) }
                     if let n = c.net { NetworkSection(net: n) }
                     notesForClaude(c)
-                    logForm(c)
+                    logForm(c).id("log")
                     history(c)
                 }
                 .padding(.horizontal, 28).padding(.vertical, 24)
                 .frame(maxWidth: 820, alignment: .leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .logFromLinkedIn)) { n in
+                guard n.object as? String == id, let text = n.userInfo?["text"] as? String else { return }
+                logType = "LinkedIn"
+                logDate = Date()
+                let body = "LinkedIn chat:\n" + text
+                logSummary = logSummary.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? body : logSummary + "\n\n" + body
+                withAnimation { proxy.scrollTo("log", anchor: .top) }
+            }
             }
             .background(Theme.paper)
             .onAppear { logStage = c.stage }
@@ -171,6 +181,9 @@ struct DetailView: View {
                     Text("LinkedIn").font(Theme.body(12)).foregroundStyle(Theme.muted).frame(width: 64, alignment: .leading)
                     Link(c.linkedin.replacingOccurrences(of: "https://www.", with: "").replacingOccurrences(of: "https://", with: ""), destination: u)
                         .font(Theme.body(13))
+                    Button("Open beside") { NotificationCenter.default.post(name: .openInLinkedIn, object: u) }
+                        .buttonStyle(.link).font(Theme.body(12))
+                        .help("Opens the profile in the LinkedIn panel. They will see you in “Who viewed your profile”.")
                 }
             }
             if c.email.isEmpty && c.phone.isEmpty {

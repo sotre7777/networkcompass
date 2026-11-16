@@ -131,8 +131,28 @@ Claude goes through every connection, reads the titles, estimates company sizes 
 - **Lists and stages** are in the sidebar. Rename them under Network Compass, Settings (⌘,).
 - **Log a touchpoint** on a contact after each contact moment, and set when to check in again.
 - **Change a stage or list** on the contact itself. On a Mac, ⌘1, ⌘2 and so on set the stage, and right-clicking a contact moves it to another list.
+- **LinkedIn beside the contact** (Mac app): see the next section.
 - **New contact** (⌘N on a Mac) adds someone who is not on LinkedIn.
 - **Notes for Claude:** write what only you know on a contact, such as "former colleague, informal" or "not relevant, ignore". Then open a command window, go to the folder (step 3), type `claude`, and type `/process-notes`.
+
+## LinkedIn beside your contacts (Mac app)
+
+Chat on LinkedIn without leaving the app, and log what was said without copying and pasting.
+
+1. Press **⌘L**, or click the **LinkedIn** button in the toolbar. A LinkedIn panel opens next to the contact.
+2. **Sign in to LinkedIn in the panel** the first time, and tick **Keep me signed in**. The app remembers it, the way a browser does. The app never sees or stores your password.
+3. Pick a contact. The panel's buttons now work for that person:
+   - **Messages** opens your LinkedIn inbox. **[Name]'s profile**, or **Open beside** under Contact details, opens their profile in the panel.
+   - **Insert opener**: click in the LinkedIn message box first, then pick the opening line. It is typed in for you. **You still press Send yourself.**
+   - **Log to [name]**: select the part of the chat you want to keep and click it. It lands in **What happened** on the contact, with Channel set to LinkedIn. With nothing selected, it takes the last 15 messages of the chat that is open. Check the text, then press **Log touchpoint**.
+   - **Show [name]**: appears when the profile in the panel belongs to someone in your list, and jumps to them.
+
+Good to know:
+- **Opening a profile shows you in that person's "Who viewed your profile"**, so the panel never opens one by itself. It only loads a page when you click.
+- **Links to other websites open in your normal browser.**
+- **Logging without a selection depends on how LinkedIn builds its pages.** If LinkedIn changes them, it may stop working; selecting the text yourself keeps working.
+- **The panel only acts when you click.** It does not scroll, collect or send anything by itself, which keeps it within LinkedIn's rules on automated tools.
+- **The browser version does not have this panel**, because LinkedIn blocks being shown inside another page. There, the LinkedIn address on a contact opens the profile in a new tab.
 
 ## If something goes wrong
 

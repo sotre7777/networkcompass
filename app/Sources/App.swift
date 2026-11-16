@@ -27,6 +27,10 @@ struct NetworkCompassApp: App {
             }
             CommandGroup(after: .toolbar) {
                 Button("Reload Data") { store.load() }.keyboardShortcut("r", modifiers: .command)
+                Button("Show or Hide LinkedIn") {
+                    let d = UserDefaults.standard
+                    d.set(!d.bool(forKey: "showLinkedIn"), forKey: "showLinkedIn")
+                }.keyboardShortcut("l", modifiers: .command)
             }
         }
 

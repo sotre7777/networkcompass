@@ -27,6 +27,7 @@ struct ContentView: View {
     @AppStorage("place") private var placeKey = "today"
     @AppStorage("leadersOnly") private var leadersOnly = false
     @AppStorage("sort") private var sort = SortOrder.list.rawValue
+    @AppStorage("showLinkedIn") private var showLinkedIn = false
     @State private var selection: String?
     @State private var search = ""
     @State private var showNew = false
@@ -103,10 +104,19 @@ struct ContentView: View {
         } content: {
             contactList.navigationSplitViewColumnWidth(min: 300, ideal: 360)
         } detail: {
-            if let id = selection, store.contact(id) != nil {
-                DetailView(id: id).id(id)
-            } else {
-                emptyDetail
+            HSplitView {
+                Group {
+                    if let id = selection, store.contact(id) != nil {
+                        DetailView(id: id).id(id)
+                    } else {
+                        emptyDetail
+                    }
+                }
+                .frame(minWidth: 420, maxWidth: .infinity, maxHeight: .infinity)
+                if showLinkedIn {
+                    LinkedInPane(contactID: selection)
+                        .frame(minWidth: 460, idealWidth: 620, maxWidth: .infinity, maxHeight: .infinity)
+                }
             }
         }
                 .sheet(isPresented: $showNew) {
@@ -117,6 +127,10 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: .newContact)) { _ in showNew = true }
         .onReceive(NotificationCenter.default.publisher(for: .setStage)) { n in
             if let s = n.object as? String, let id = selection { store.update(id) { $0.stage = s } }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openInLinkedIn)) { n in
+            showLinkedIn = true
+            if let u = n.object as? URL { LinkedInBrowser.shared.open(u) }
         }
         .onReceive(NotificationCenter.default.publisher(for: .openContact)) { n in
             if let id = n.object as? String { placeKey = "everyone"; leadersOnly = false; selection = id }
@@ -225,6 +239,8 @@ struct ContentView: View {
                 }
                 .pickerStyle(.menu).frame(width: 190)
             }
+            Toggle(isOn: $showLinkedIn) { Label("LinkedIn", systemImage: "bubble.left.and.text.bubble.right") }
+                .help("Show LinkedIn next to the contact (⌘L)")
             Button { showNew = true } label: { Label("New contact", systemImage: "plus") }
                 .help("New contact (⌘N)")
         }
@@ -274,4 +290,6 @@ extension Notification.Name {
     static let newContact = Notification.Name("newContact")
     static let openContact = Notification.Name("openContact")
     static let setStage = Notification.Name("setStage")
+    static let openInLinkedIn = Notification.Name("openInLinkedIn")
+    static let logFromLinkedIn = Notification.Name("logFromLinkedIn")
 }
